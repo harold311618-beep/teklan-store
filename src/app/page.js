@@ -1,13 +1,34 @@
 "use client"; // Necesario para componentes interactivos
+import { useEffect, useState } from 'react';
 import { motion } from "framer-motion";
+import { db } from '../lib/firebase'; // Importamos tu conexión a DB
+import { collection, getDocs } from 'firebase/firestore';
 
 export default function Home() {
+  const [productos, setProductos] = useState([]);
+
+  // Efecto para traer los productos de Firebase al cargar
+  useEffect(() => {
+    const fetchProductos = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "productos"));
+        const listaProductos = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setProductos(listaProductos);
+      } catch (error) {
+        console.error("Error al obtener productos: ", error);
+      }
+    };
+
+    fetchProductos();
+  }, []);
+
   return (
     <div className="max-w-6xl mx-auto px-4">
       {/* Banner Producto Estrella */}
       <section className="my-10 relative rounded-3xl overflow-hidden h-[400px] flex items-center bg-gradient-to-r from-slate-800 to-cyan-950">
-        
-        {/* Animación del texto */}
         <motion.div 
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -21,7 +42,6 @@ export default function Home() {
           </button>
         </motion.div>
 
-        {/* Animación de la imagen */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -36,17 +56,20 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Catálogo de Productos */}
+      {/* Catálogo de Productos (Dinámico) */}
       <section className="my-16">
         <h3 className="text-3xl font-bold mb-8">Novedades en Stock</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[1, 2, 3].map((item) => (
-            <div key={item} className="bg-slate-800 p-6 rounded-2xl border border-slate-700 hover:border-cyan-500 transition-all duration-300">
-              <div className="h-48 bg-slate-700 rounded-xl mb-4 flex items-center justify-center">
-                <span className="text-slate-500">Imagen Producto</span>
+          {productos.map((producto) => (
+            <div key={producto.id} className="bg-slate-800 p-6 rounded-2xl border border-slate-700 hover:border-cyan-500 transition-all duration-300">
+              <div className="h-48 bg-slate-700 rounded-xl mb-4 flex items-center justify-center overflow-hidden">
+                {/* Aquí podrías renderizar producto.imagenUrl si la tienes en Firebase */}
+                <span className="text-slate-500">Imagen de {producto.nombre}</span>
               </div>
-              <h4 className="font-bold text-lg">Smartphone Modelo {item}</h4>
-              <p className="text-cyan-400 font-bold mt-2">$4.500.000</p>
+              <h4 className="font-bold text-lg">{producto.nombre}</h4>
+              <p className="text-cyan-400 font-bold mt-2">
+                ${producto.precio?.toLocaleString('es-CO')}
+              </p>
               <button className="mt-4 w-full border border-slate-600 py-2 rounded-lg hover:bg-slate-700 transition">
                 Ver detalles
               </button>
