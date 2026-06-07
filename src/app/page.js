@@ -6,6 +6,7 @@ import { db } from '../lib/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCart } from '@/context/CartContext';
 
 const formatCurrency = (value) => {
   const price = Number(value);
@@ -24,6 +25,7 @@ const getProductBrand = (producto) => {
 };
 
 export default function Home() {
+  const { addItem } = useCart();
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -223,12 +225,21 @@ export default function Home() {
                 <p className="text-cyan-400 font-bold mt-2">
                   ${formatCurrency(producto.Precio)}
                 </p>
-                <Link
-                  href={getProductHref(producto.id)}
-                  className="mt-4 block w-full border border-slate-600 py-2 rounded-lg hover:bg-slate-700 transition text-center"
-                >
-                  Ver detalles
-                </Link>
+                <div className="mt-4 grid grid-cols-1 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => addItem(producto)}
+                    className="w-full bg-cyan-500 text-slate-900 py-2 rounded-lg font-bold hover:bg-cyan-400 transition"
+                  >
+                    Agregar al carrito
+                  </button>
+                  <Link
+                    href={getProductHref(producto.id)}
+                    className="block w-full border border-slate-600 py-2 rounded-lg hover:bg-slate-700 transition text-center"
+                  >
+                    Ver detalles
+                  </Link>
+                </div>
               </div>
             ))
           )}

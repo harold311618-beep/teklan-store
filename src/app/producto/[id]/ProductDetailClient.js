@@ -5,6 +5,7 @@ import { db } from '../../../lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { motion } from "framer-motion";
 import Image from 'next/image';
+import { useCart } from '@/context/CartContext';
 
 const formatCurrency = (value) => {
   const price = Number(value);
@@ -12,6 +13,7 @@ const formatCurrency = (value) => {
 };
 
 export default function ProductDetailClient({ productId }) {
+  const { addItem } = useCart();
   const normalizedProductId = useMemo(() => {
     if (!productId) return "";
     return Array.isArray(productId) ? productId[0] : String(productId);
@@ -107,9 +109,18 @@ export default function ProductDetailClient({ productId }) {
             </ul>
           </div>
 
-          <button className="bg-cyan-500 text-slate-900 px-10 py-4 rounded-full font-bold text-lg w-full hover:bg-cyan-400 transition-all shadow-lg shadow-cyan-500/20">
-            Solicitar Crédito Teklan
-          </button>
+          <div className="grid gap-3">
+            <button
+              type="button"
+              onClick={() => addItem(producto)}
+              className="bg-cyan-500 text-slate-900 px-10 py-4 rounded-full font-bold text-lg w-full hover:bg-cyan-400 transition-all shadow-lg shadow-cyan-500/20"
+            >
+              Agregar al carrito
+            </button>
+            <button className="border border-slate-600 px-10 py-4 rounded-full font-bold text-lg w-full hover:bg-slate-800 transition-all">
+              Solicitar Crédito Teklan
+            </button>
+          </div>
         </motion.div>
       </div>
 
