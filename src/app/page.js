@@ -3,10 +3,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from "framer-motion";
 import { db } from '../lib/firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { addDoc, collection, getDocs, serverTimestamp } from 'firebase/firestore';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
+import CreditFormModal from '@/components/CreditFormModal';
 
 const formatCurrency = (value) => {
   const price = Number(value);
@@ -34,6 +35,9 @@ export default function Home() {
   const [maxPrice, setMaxPrice] = useState("");
   const [sortOrder, setSortOrder] = useState("default");
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [isCreditFormOpen, setIsCreditFormOpen] = useState(false);
+  const [creditSuccessMessage, setCreditSuccessMessage] = useState("");
+  const [creditErrorMessage, setCreditErrorMessage] = useState("");
 
   useEffect(() => {
     const fetchProductos = async () => {
@@ -95,6 +99,27 @@ export default function Home() {
     return filtered;
   }, [maxPrice, productos, search, selectedBrand, sortOrder]);
 
+  const handleCreditSubmit = async (formData) => {
+    setCreditErrorMessage("");
+
+    try {
+      await addDoc(collection(db, 'solicitudes_contacto_credito'), {
+        nombre: formData.nombre,
+        telefono: formData.telefono,
+        correo: formData.correo,
+        horario: formData.horario || '',
+        origen: 'banner',
+        solicitadoEn: serverTimestamp(),
+      });
+
+      setIsCreditFormOpen(false);
+      setCreditSuccessMessage('Gracias por tu solicitud. Nuestro equipo de crédito te contactará pronto.');
+    } catch (error) {
+      console.error('Error guardando solicitud de crédito:', error);
+      setCreditErrorMessage('No pudimos enviar tu solicitud en este momento. Intenta de nuevo.');
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto px-4">
       <section className="my-10 relative rounded-3xl overflow-hidden min-h-[460px] md:h-[400px] flex items-start md:items-center bg-gradient-to-r from-slate-800 to-cyan-950">
@@ -108,9 +133,25 @@ export default function Home() {
           <p className="text-lg mb-6 text-slate-300">
             La nueva era de la potencia. Disponible hoy con nuestro crédito directo Teklan.
           </p>
-          <button className="bg-cyan-500 text-slate-900 px-8 py-3 rounded-full font-bold hover:bg-cyan-400 transition shadow-lg shadow-cyan-500/20">
+          <button
+            type="button"
+            onClick={() => setIsCreditFormOpen(true)}
+            className="bg-cyan-500 text-slate-900 px-8 py-3 rounded-full font-bold hover:bg-cyan-400 transition shadow-lg shadow-cyan-500/20"
+          >
             Solicitar Crédito
           </button>
+
+          {creditSuccessMessage && (
+            <p className="mt-4 max-w-md rounded-2xl border border-cyan-600 bg-cyan-950/50 px-4 py-3 text-sm text-cyan-100">
+              {creditSuccessMessage}
+            </p>
+          )}
+
+          {creditErrorMessage && (
+            <p className="mt-4 max-w-md rounded-2xl border border-rose-600 bg-rose-950/50 px-4 py-3 text-sm text-rose-100">
+              {creditErrorMessage}
+            </p>
+          )}
         </motion.div>
 
         <motion.div
@@ -129,6 +170,12 @@ export default function Home() {
           />
         </motion.div>
       </section>
+
+      <CreditFormModal
+        open={isCreditFormOpen}
+        onClose={() => setIsCreditFormOpen(false)}
+        onSubmit={handleCreditSubmit}
+      />
 
       <section className="my-16">
         <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">

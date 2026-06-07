@@ -18,11 +18,16 @@ const normalizeCartProduct = (product) => ({
   imageUrl: product.imagenUrl || product.imageUrl || "",
 });
 
+const getStorageCart = () => {
+  if (typeof window === 'undefined') return null;
+  return window.sessionStorage.getItem(CART_STORAGE_KEY) || window.localStorage.getItem(CART_STORAGE_KEY);
+};
+
 const loadInitialCart = () => {
   if (typeof window === 'undefined') return [];
 
   try {
-    const savedCart = window.localStorage.getItem(CART_STORAGE_KEY);
+    const savedCart = getStorageCart();
     return savedCart ? JSON.parse(savedCart) : [];
   } catch {
     return [];
@@ -33,7 +38,9 @@ export function CartProvider({ children }) {
   const [items, setItems] = useState(loadInitialCart);
 
   useEffect(() => {
-    window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+    const value = JSON.stringify(items);
+    window.localStorage.setItem(CART_STORAGE_KEY, value);
+    window.sessionStorage.setItem(CART_STORAGE_KEY, value);
   }, [items]);
 
   const cart = useMemo(() => {

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from 'next/link';
 import { useState } from 'react';
 import { useCart } from '@/context/CartContext';
 
@@ -101,6 +102,12 @@ export default function CartDrawer() {
                   <span>Total contado</span>
                   <span className="text-cyan-300">${formatCurrency(total)}</span>
                 </div>
+                <Link
+                  href="/checkout"
+                  className="mt-4 block rounded-full bg-cyan-500 px-4 py-3 text-center text-sm font-bold text-slate-950 hover:bg-cyan-400 transition"
+                >
+                  Ir al checkout
+                </Link>
               </div>
             </div>
           )}

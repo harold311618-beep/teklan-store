@@ -28,8 +28,8 @@ Objetivo: dar vida a las transacciones y a la captura de clientes.
 | Tarea | Estado |
 | --- | --- |
 | Estado global del carrito: logica para agregar, eliminar y sumar productos para pago de contado. | Completado |
-| Integracion del formulario de credito directo: modal con formulario basico de nombre, telefono, correo y horario de contacto. | Pendiente |
-| Conexion con Firestore: guardar solicitudes en la coleccion `solicitudes_contacto_credito`. | Pendiente |
+| Integracion del formulario de credito directo: modal con formulario basico de nombre, telefono, correo y horario de contacto. | Completado |
+| Conexion con Firestore: guardar solicitudes en la coleccion `solicitudes_contacto_credito`. | Completado |
 
 ## Fase 4: Panel de Administracion
 
@@ -37,9 +37,9 @@ Objetivo: centro de control operativo para gestionar el negocio.
 
 | Tarea | Estado |
 | --- | --- |
-| Autenticacion: inicio de sesion seguro con Firebase Auth para el equipo de ventas. | Pendiente |
-| Gestion de leads: tabla interna en tiempo real desde Firestore para ver telefonos de clientes y cambiar estados como Pendiente, Contactado o En Negociacion. | Pendiente |
-| Gestion de inventario: modulo basico para agregar celulares o modificar precios sin tocar codigo. | Pendiente |
+| Autenticacion: inicio de sesion seguro con Firebase Auth para el equipo de ventas. | Completado |
+| Gestion de leads: tabla interna en tiempo real desde Firestore para ver telefonos de clientes y cambiar estados como Pendiente, Contactado o En Negociacion. | Completado |
+| Gestion de inventario: modulo basico para agregar celulares o modificar precios sin tocar codigo. | Completado |
 
 ## Fase 5: Pruebas, Optimizacion y Lanzamiento
 

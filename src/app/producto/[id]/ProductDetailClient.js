@@ -2,10 +2,11 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { db } from '../../../lib/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { motion } from "framer-motion";
 import Image from 'next/image';
 import { useCart } from '@/context/CartContext';
+import CreditFormModal from '@/components/CreditFormModal';
 
 const formatCurrency = (value) => {
   const price = Number(value);
@@ -22,6 +23,32 @@ export default function ProductDetailClient({ productId }) {
   const [producto, setProducto] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isCreditFormOpen, setIsCreditFormOpen] = useState(false);
+  const [creditSuccessMessage, setCreditSuccessMessage] = useState("");
+  const [creditErrorMessage, setCreditErrorMessage] = useState("");
+
+  const handleCreditSubmit = async (formData) => {
+    setCreditErrorMessage("");
+
+    try {
+      await addDoc(collection(db, 'solicitudes_contacto_credito'), {
+        nombre: formData.nombre,
+        telefono: formData.telefono,
+        correo: formData.correo,
+        horario: formData.horario || '',
+        origen: 'detalle_producto',
+        productoId: producto?.id || '',
+        productoNombre: producto?.Nombre || '',
+        solicitadoEn: serverTimestamp(),
+      });
+
+      setIsCreditFormOpen(false);
+      setCreditSuccessMessage('Gracias por tu solicitud. Nuestro equipo de crédito te contactará pronto.');
+    } catch (error) {
+      console.error('Error guardando solicitud de crédito:', error);
+      setCreditErrorMessage('No pudimos enviar tu solicitud en este momento. Intenta de nuevo.');
+    }
+  };
 
   useEffect(() => {
     if (!normalizedProductId) return;
@@ -117,12 +144,34 @@ export default function ProductDetailClient({ productId }) {
             >
               Agregar al carrito
             </button>
-            <button className="border border-slate-600 px-10 py-4 rounded-full font-bold text-lg w-full hover:bg-slate-800 transition-all">
+            <button
+              type="button"
+              onClick={() => setIsCreditFormOpen(true)}
+              className="border border-slate-600 px-10 py-4 rounded-full font-bold text-lg w-full hover:bg-slate-800 transition-all"
+            >
               Solicitar Crédito Teklan
             </button>
           </div>
+
+          {creditSuccessMessage && (
+            <div className="mt-6 rounded-3xl border border-cyan-600 bg-cyan-950/50 p-4 text-cyan-100">
+              <p className="font-semibold">{creditSuccessMessage}</p>
+            </div>
+          )}
+
+          {creditErrorMessage && (
+            <div className="mt-6 rounded-3xl border border-rose-600 bg-rose-950/50 p-4 text-rose-100">
+              <p className="font-semibold">{creditErrorMessage}</p>
+            </div>
+          )}
         </motion.div>
       </div>
+
+      <CreditFormModal
+        open={isCreditFormOpen}
+        onClose={() => setIsCreditFormOpen(false)}
+        onSubmit={handleCreditSubmit}
+      />
 
       <section className="mt-20 border-t border-slate-800 pt-12">
         <h2 className="text-3xl font-bold mb-8 text-center">¿Por qué elegir Teklan?</h2>
