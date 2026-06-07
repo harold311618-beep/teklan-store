@@ -29,7 +29,7 @@ export default function Home() {
           className="hidden md:block md:w-1/2 h-full relative"
         >
           <img 
-            src="/iphone17pro.png" 
+            src="https://cdsassets.apple.com/live/7WUAS350/images/tech-specs/iphone-17-pro-17-pro-max-hero.png" 
             alt="iPhone 17 Pro" 
             className="object-contain h-full w-full p-4 drop-shadow-2xl"
           />

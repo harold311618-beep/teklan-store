@@ -22,6 +22,8 @@ export default function RootLayout({ children }) {
 
         <footer className="p-10 border-t border-slate-800 text-center text-slate-500 text-sm">
           <p>© 2026 Teklan - Tecnología a tu alcance.</p>
+          <p>By Montc Investment SAS</p>
+          <p>NIT 901.828.471-9</p>
         </footer>
       </body>
     </html>
