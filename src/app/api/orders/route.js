@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createOrderRecord } from '@/services/orderService';
-import { EPAYCO_CHECKOUT_URL, EPAYCO_CONFIRMATION_SECRET } from '@/lib/config';
+import { createOrderRecord, buildEpaycoCheckoutUrl } from '@/services/orderService';
+import { EPAYCO_CHECKOUT_URL } from '@/lib/config';
 
 export async function POST(request) {
   const payload = await request.json();
@@ -25,10 +25,11 @@ export async function POST(request) {
       email: payload.customer.email,
     });
 
+    const paymentUrl = buildEpaycoCheckoutUrl(order, payload.customer);
     const responsePayload = {
       orderId: order.id,
       reference: order.reference,
-      paymentUrl: EPAYCO_CHECKOUT_URL ? `${EPAYCO_CHECKOUT_URL}?reference=${order.reference}` : null,
+      paymentUrl,
     };
 
     return NextResponse.json(responsePayload);

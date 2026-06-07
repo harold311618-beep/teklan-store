@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import CheckoutSummary from '@/components/CheckoutSummary';
@@ -27,9 +28,9 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (user?.email) {
-      setFormData((current) => ({ ...current, email: user.email }));
+      setFormData((current) => (current.email ? current : { ...current, email: user.email }));
     }
-  }, [user]);
+  }, [user?.email]);
 
   const totals = useMemo(() => calculateOrderTotals(items), [items]);
 
@@ -179,18 +180,80 @@ export default function CheckoutPage() {
               />
             </label>
 
-            <label className="block">
+            <div>
               <span className="text-sm font-semibold text-slate-300">Forma de pago</span>
-              <select
-                value={formData.paymentMethod}
-                onChange={handleChange('paymentMethod')}
-                className="mt-2 w-full rounded-2xl bg-slate-900 border border-slate-700 px-4 py-3 text-slate-100 outline-none focus:border-cyan-400"
-              >
-                <option value={PAYMENT_METHODS.CASH}>Pago de contado</option>
-                <option value={PAYMENT_METHODS.PSE}>PSE</option>
-                <option value={PAYMENT_METHODS.CASH_PAYMENT}>Efectivo</option>
-              </select>
-            </label>
+              <div className="mt-4 space-y-3">
+                {[
+                  {
+                    id: PAYMENT_METHODS.PSE,
+                    label: 'PSE',
+                    description: 'Transferencia bancaria en línea',
+                    icon: '🏦',
+                  },
+                  {
+                    id: PAYMENT_METHODS.CARD,
+                    label: 'Tarjeta de crédito/débito',
+                    description: 'Visa, Mastercard, American Express',
+                    icon: '💳',
+                  },
+                  {
+                    id: PAYMENT_METHODS.CASH,
+                    label: 'Pago de contado',
+                    description: 'Coordinamos la forma de pago',
+                    icon: '💰',
+                  },
+                ].map((method) => (
+                  <label key={method.id} className="block cursor-pointer">
+                    <div
+                      className={`rounded-2xl border-2 p-4 transition ${
+                        formData.paymentMethod === method.id
+                          ? 'border-cyan-400 bg-cyan-950/30'
+                          : 'border-slate-700 bg-slate-900/50 hover:border-slate-600'
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          value={method.id}
+                          checked={formData.paymentMethod === method.id}
+                          onChange={handleChange('paymentMethod')}
+                          className="mt-1"
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xl">{method.icon}</span>
+                            <span className="font-semibold text-white">{method.label}</span>
+                          </div>
+                          <p className="mt-1 text-xs text-slate-400">{method.description}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {formData.paymentMethod === PAYMENT_METHODS.PSE && (
+              <div className="rounded-2xl border border-cyan-700 bg-cyan-950/40 p-4 text-cyan-100 text-sm">
+                <p className="font-semibold">PSE - Transferencia Bancaria</p>
+                <p className="mt-2">Se abrirá tu banco para confirmar la transferencia. Completamente seguro y verificado.</p>
+              </div>
+            )}
+
+            {formData.paymentMethod === PAYMENT_METHODS.CARD && (
+              <div className="rounded-2xl border border-cyan-700 bg-cyan-950/40 p-4 text-cyan-100 text-sm">
+                <p className="font-semibold">Tarjeta de crédito/débito</p>
+                <p className="mt-2">Acepta Visa, Mastercard y American Express. El pago se procesa mediante ePayco de forma segura.</p>
+              </div>
+            )}
+
+            {formData.paymentMethod === PAYMENT_METHODS.CASH && (
+              <div className="rounded-2xl border border-emerald-700 bg-emerald-950/40 p-4 text-emerald-100 text-sm">
+                <p className="font-semibold">Pago de contado</p>
+                <p className="mt-2">Coordinaremos contigo para definir la forma y lugar de pago. Nuestro equipo te contactará.</p>
+              </div>
+            )}
 
             {error && (
               <div className="rounded-2xl border border-rose-600 bg-rose-950/50 px-4 py-3 text-sm text-rose-100">

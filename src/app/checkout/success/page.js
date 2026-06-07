@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function CheckoutSuccessPage({ searchParams }) {
   const orderId = searchParams?.orderId || '';
 
@@ -12,13 +14,13 @@ export default function CheckoutSuccessPage({ searchParams }) {
           </p>
         )}
         <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:justify-center">
-          <a href="/" className="rounded-full bg-cyan-500 px-6 py-3 font-bold text-slate-950 hover:bg-cyan-400 transition">
+          <Link href="/" className="rounded-full bg-cyan-500 px-6 py-3 font-bold text-slate-950 hover:bg-cyan-400 transition">
             Volver a la tienda
-          </a>
+          </Link>
           {orderId && (
-            <a href={`/pedido/${orderId}`} className="rounded-full border border-slate-700 px-6 py-3 text-slate-100 hover:bg-slate-800 transition">
+            <Link href={`/pedido/${orderId}`} className="rounded-full border border-slate-700 px-6 py-3 text-slate-100 hover:bg-slate-800 transition">
               Ver orden
-            </a>
+            </Link>
           )}
         </div>
       </div>
