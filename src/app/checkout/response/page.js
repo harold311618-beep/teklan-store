@@ -1,10 +1,14 @@
 'use client';
 
+import { use } from 'react';
 import Link from 'next/link';
 
-export default function CheckoutResponsePage({ searchParams }) {
-  const status = (searchParams?.estado_pol || searchParams?.status || '').toString().toLowerCase();
-  const reference = searchParams?.ref_payco || searchParams?.reference || searchParams?.invoice || '';
+export default function CheckoutResponsePage({ searchParams: searchParamsPromise }) {
+  // En Next.js 15 / React 19, searchParams es una promesa que debe desempaquetarse con use()
+  const searchParams = use(searchParamsPromise);
+
+  const status = (searchParams?.x_response || searchParams?.estado_pol || searchParams?.status || '').toString().toLowerCase();
+  const reference = searchParams?.x_ref_payco || searchParams?.ref_payco || searchParams?.reference || searchParams?.invoice || '';
   const isAccepted = status === 'aceptada' || status === 'approved' || status === 'pagado';
   const isRejected = status === 'rechazada' || status === 'rejected';
 
