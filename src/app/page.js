@@ -68,12 +68,12 @@ export default function Home() {
             productos.map((producto) => (
               <div key={producto.id} className="bg-slate-800 p-6 rounded-2xl border border-slate-700 hover:border-cyan-500 transition-all duration-300">
                 <div className="h-48 bg-slate-700 rounded-xl mb-4 flex items-center justify-center overflow-hidden">
-                  <span className="text-slate-500">Imagen de {producto.nombre || "producto"}</span>
+                  <span className="text-slate-500">Imagen de {producto.Nombre || "producto"}</span>
                 </div>
-                <h4 className="font-bold text-lg">{producto.nombre || "Sin nombre"}</h4>
+                <h4 className="font-bold text-lg">{producto.Nombre || "Sin nombre"}</h4>
                 <p className="text-cyan-400 font-bold mt-2">
                   {/* Convertimos el precio a número por seguridad antes de formatearlo */}
-                  ${producto.precio ? Number(producto.precio).toLocaleString('es-CO') : "0"}
+                  ${producto.Precio ? Number(producto.Precio).toLocaleString('es-CO') : "0"}
                 </p>
                 <button className="mt-4 w-full border border-slate-600 py-2 rounded-lg hover:bg-slate-700 transition">
                   Ver detalles
