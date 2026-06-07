@@ -1,0 +1,7 @@
+Nombre
+Precio
+procesador
+ram
+almacenamiento
+camara
+imagenUrl
